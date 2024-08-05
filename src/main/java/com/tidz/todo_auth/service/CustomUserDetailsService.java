@@ -1,6 +1,5 @@
 package com.tidz.todo_auth.service;
 
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +19,11 @@ public class CustomUserDetailsService {
 	private UserTodoRepository userTodoRepository;
 
 	public UserDetails loadUserbyUsername(String username) throws UsernameNotFoundException {
-		Optional<UserTodo> userOptional = this.userTodoRepository.findByUsername(username);
-		UserTodo user = userOptional.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+		UserTodo user = this.userTodoRepository.findByUsername(username)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
 		return new User(user.getUsername(), user.getPassword(),
 				user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role)).collect(Collectors.toList()));
+
 	}
 }
